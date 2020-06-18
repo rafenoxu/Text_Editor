@@ -18,7 +18,6 @@ public class PreviousOperation implements ActionListener {
         String foundText = matchResult.getWord();
 
         textEditor.getTextArea().setCaretPosition(index + foundText.length());
-        System.out.println(textEditor.getTextArea().getCaretPosition());
         textEditor.getTextArea().select(index, index + foundText.length());
         textEditor.getTextArea().grabFocus();
     }

@@ -8,27 +8,32 @@ import java.util.regex.Pattern;
 public class SearchHistory {
 
     private List<Match> searchResults;
-    //private List<MatchResult> searchResults;
     private int currentPosition;
 
     public SearchHistory() {
         searchResults = new ArrayList<>();
     }
 
-    public Match startSearch(String wordToFind, String text) {
-            Pattern word = Pattern.compile(wordToFind);
-            Matcher matcher = word.matcher(text);
+    public Match startSearch(String wordToFind, String text, boolean regex) {
+        Pattern word;
+        if (regex) {
+            word = Pattern.compile(wordToFind.replaceAll("\\\\", "\\\\"));
+        } else {
+            word = Pattern.compile(wordToFind);
+        }
+        Matcher matcher = word.matcher(text);
 
-            while (matcher.find()) {
-                searchResults.add(new Match(matcher.start(), matcher.group()));
-            }
+        searchResults.clear();
+        while (matcher.find()) {
+            searchResults.add(new Match(matcher.start(), matcher.group()));
+        }
 
-            if (searchResults.isEmpty()) {
-                return null;
-            } else {
-                currentPosition = 0;
-                return searchResults.get(currentPosition);
-            }
+        if (searchResults.isEmpty()) {
+            return null;
+        } else {
+            currentPosition = 0;
+            return searchResults.get(currentPosition);
+        }
     }
 
     public Match getNextMatch() {

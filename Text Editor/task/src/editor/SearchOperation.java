@@ -1,5 +1,6 @@
 package editor;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -13,18 +14,26 @@ public class SearchOperation implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        String wordToFind = textEditor.getTopPanel().getSearchField().getText();
-        String text = textEditor.getTextArea().getText();
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() {
+                String wordToFind = textEditor.getTopPanel().getSearchField().getText();
+                String text = textEditor.getTextArea().getText();
 
-        Match matchResult = textEditor.getHistory().startSearch(wordToFind, text);
-        if (matchResult != null) {
-            int index = matchResult.getIndex();
-            String foundText = matchResult.getWord();
+                boolean regex = textEditor.getTopPanel().getRegexCheckBox().isSelected();
+                Match matchResult = textEditor.getHistory().startSearch(wordToFind, text, regex);
+                if (matchResult != null) {
+                    int index = matchResult.getIndex();
+                    String foundText = matchResult.getWord();
 
-            textEditor.getTextArea().setCaretPosition(index + foundText.length());
-            System.out.println(textEditor.getTextArea().getCaretPosition());
-            textEditor.getTextArea().select(index, index + foundText.length());
-            textEditor.getTextArea().grabFocus();
-        }
+                    textEditor.getTextArea().setCaretPosition(index + foundText.length());
+                    textEditor.getTextArea().select(index, index + foundText.length());
+                    textEditor.getTextArea().grabFocus();
+                }
+                return null;
+            }
+        };
+
+        worker.execute();
     }
 }
